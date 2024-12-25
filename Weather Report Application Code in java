@@ -1,0 +1,135 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+// Weather data class to store weather details
+class WeatherData {
+    private String city;
+    private double temperature;
+    private double humidity;
+    private String condition;
+
+    public WeatherData(String city, double temperature, double humidity, String condition) {
+        this.city = city;
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.condition = condition;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    @Override
+    public String toString() {
+        return "City: " + city +
+                "\nTemperature: " + temperature + "°C" +
+                "\nHumidity: " + humidity + "%" +
+                "\nCondition: " + condition;
+    }
+}
+
+// Weather system class to manage weather data
+class WeatherSystem {
+    private Map<String, WeatherData> weatherDatabase = new HashMap<>();
+
+    public WeatherSystem() {
+        // Adding mock weather data
+        weatherDatabase.put("new york", new WeatherData("New York", 22.5, 65.0, "Sunny"));
+        weatherDatabase.put("los angeles", new WeatherData("Los Angeles", 25.3, 58.0, "Partly Cloudy"));
+        weatherDatabase.put("london", new WeatherData("London", 18.4, 72.0, "Rainy"));
+        weatherDatabase.put("tokyo", new WeatherData("Tokyo", 20.0, 68.0, "Cloudy"));
+        weatherDatabase.put("mumbai", new WeatherData("Mumbai", 30.2, 75.0, "Humid"));
+    }
+
+    public WeatherData getWeatherData(String city) {
+        return weatherDatabase.get(city.toLowerCase());
+    }
+
+    public void addWeatherData(String city, double temperature, double humidity, String condition) {
+        weatherDatabase.put(city.toLowerCase(), new WeatherData(city, temperature, humidity, condition));
+    }
+
+    public void displayAvailableCities() {
+        System.out.println("Available cities:");
+        for (String city : weatherDatabase.keySet()) {
+            System.out.println("- " + capitalize(city));
+        }
+    }
+
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+}
+
+// Main application class
+public class WeatherReportApplication {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        WeatherSystem weatherSystem = new WeatherSystem();
+
+        while (true) {
+            System.out.println("\n=== Weather Report Application ===");
+            System.out.println("1. View Weather for a City");
+            System.out.println("2. Add New Weather Data");
+            System.out.println("3. Display Available Cities");
+            System.out.println("4. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter city name: ");
+                    String city = scanner.nextLine();
+                    WeatherData data = weatherSystem.getWeatherData(city);
+                    if (data != null) {
+                        System.out.println("\nWeather Details:");
+                        System.out.println(data);
+                    } else {
+                        System.out.println("Weather data for " + city + " not found.");
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter city name: ");
+                    String newCity = scanner.nextLine();
+                    System.out.print("Enter temperature (°C): ");
+                    double temperature = scanner.nextDouble();
+                    System.out.print("Enter humidity (%): ");
+                    double humidity = scanner.nextDouble();
+                    scanner.nextLine(); // Consume newline
+                    System.out.print("Enter weather condition (e.g., Sunny, Rainy): ");
+                    String condition = scanner.nextLine();
+                    weatherSystem.addWeatherData(newCity, temperature, humidity, condition);
+                    System.out.println("Weather data added successfully!");
+                    break;
+
+                case 3:
+                    weatherSystem.displayAvailableCities();
+                    break;
+
+                case 4:
+                    System.out.println("Thank you for using the Weather Report Application. Goodbye!");
+                    scanner.close();
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        }
+    }
+}
